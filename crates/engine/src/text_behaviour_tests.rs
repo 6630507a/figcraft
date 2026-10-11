@@ -62,7 +62,7 @@ fn arrows_and_deletes_step_over_whole_clusters() {
     key(&mut s, "Left", false, false, false).unwrap();
     // Delete and Backspace remove a whole cluster.
     key(&mut s, "Delete", false, false, false).unwrap();
-    assert_eq!(chars(&s, t), format!("ab\u{1F1EF}\u{1F1F5}e\u{0301}"));
+    assert_eq!(chars(&s, t), "ab\u{1F1EF}\u{1F1F5}e\u{0301}");
     key(&mut s, "Right", false, false, true).unwrap(); // to the end
     key(&mut s, "Backspace", false, false, false).unwrap();
     assert_eq!(chars(&s, t), "ab\u{1F1EF}\u{1F1F5}");
