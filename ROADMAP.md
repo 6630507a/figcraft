@@ -1,8 +1,8 @@
 # FigCraft Roadmap
 
-**Stage: alpha** · next: beta, ~28 points and ~195–355 h away (one Opus 5.5 agent; ~40–80 h wall-clock with 5 agents)
+**Stage: alpha** · next: beta, ~26 points and ~173–310 h away (one Opus 5.5 agent; ~35–70 h wall-clock with 5 agents)
 
-> **Last reviewed:** 2026-10-10 · **Last updated:** 2026-10-11 · **Change:** minor (layers panel keyboard: F2 rename, Shift+F10 context menu, keyboard box selection, 10k-layer QA; per-side stroke weight variables; auto layout behaviour suite and fixes; Display P3: gamut warning and soft-proof (true P3 blocked upstream); several windows; localization layer with a draft Spanish catalog; hosting figcraft-server: wss in the desktop app, server releases, deployment guide; plugin panels and settings; canvas fixes: boolean hit testing on the result, group drags, frame outlines and slices; code connect; stretch and scatter brushes, pen pressure; text on a path and pattern fills; team libraries on the server and swap library; branches: create, update from main, review and merge; animated GIF fills and TIFF images; Open recent, outlines for the selection and mask outlines: menu breadth 100%; extended collections, variables import/export, gradient stop and variant bindings; feature breadth ~79%; ready ~47%) · **Target:** Figma Design (desktop app 126.10.7)
+> **Last reviewed:** 2026-10-10 · **Last updated:** 2026-10-11 · **Change:** minor (layers panel keyboard: F2 rename, Shift+F10 context menu, keyboard box selection, 10k-layer QA; per-side stroke weight variables; `.fig` import, best effort; Windows QA pass with eight fixes; auto layout behaviour suite and fixes; Display P3: gamut warning and soft-proof (true P3 blocked upstream); several windows; localization layer with a draft Spanish catalog; hosting figcraft-server: wss in the desktop app, server releases, deployment guide; plugin panels and settings; canvas fixes: boolean hit testing on the result, group drags, frame outlines and slices; code connect; stretch and scatter brushes, pen pressure; text on a path and pattern fills; team libraries on the server and swap library; branches: create, update from main, review and merge; animated GIF fills and TIFF images; Open recent, outlines for the selection and mask outlines: menu breadth 100%; extended collections, variables import/export, gradient stop and variant bindings; feature breadth ~80%; ready ~49%) · **Target:** Figma Design (desktop app 126.10.7)
 
 FigCraft is a clean-room, open-source, pure-Rust reimplementation of the Figma design workflow,
 native on macOS, Windows, Linux and FreeBSD and in the browser, fully drivable by agents through
@@ -14,20 +14,20 @@ start with [`docs/gaps.md`](docs/gaps.md).
 | | Value | Kind |
 |---|---|---|
 | Menu/command breadth | **100%** (204 / 204) | measured, [`docs/parity-checklist.md`](docs/parity-checklist.md) (`cargo xtask parity`) |
-| Feature breadth | **~79%** (core editor ~90%) | estimated, [`docs/target-app-parity.md`](docs/target-app-parity.md) |
-| Ready for real work | **~47%** | estimated, same doc (written dimension weights and scores) |
-| Essentials user | **~53%** | estimated: core features 77.9% × 0.92 launch/stability × 0.92 discoverability × 0.8 opening files people send ([method](docs/target-app-parity.md#essentials-user)) |
-| Mainstream practitioner | **~43%** | estimated: weekly areas 67.1% × 0.9 interaction × 0.9 stability × 0.8 file exchange with Figma users ([method](docs/target-app-parity.md#mainstream-practitioner)) |
-| Remaining to beta | **~195–355 h** one agent | estimated |
-| Remaining to full parity | **~344–663 h** one agent (~92–160 h wall-clock with 5 agents) | estimated |
+| Feature breadth | **~80%** (core editor ~91%) | estimated, [`docs/target-app-parity.md`](docs/target-app-parity.md) |
+| Ready for real work | **~49%** | estimated, same doc (written dimension weights and scores) |
+| Essentials user | **~57%** | estimated: core features 77.8% × 0.92 launch/stability × 0.92 discoverability × 0.88 opening files people send ([method](docs/target-app-parity.md#essentials-user)) |
+| Mainstream practitioner | **~46%** | estimated: weekly areas 68.1% × 0.9 interaction × 0.9 stability × 0.85 file exchange with Figma users ([method](docs/target-app-parity.md#mainstream-practitioner)) |
+| Remaining to beta | **~173–310 h** one agent | estimated |
+| Remaining to full parity | **~322–618 h** one agent (~86–150 h wall-clock with 5 agents) | estimated |
 
 ### Readiness by audience
 
 | Audience | Ready % | Opus 5.5 agent wall-clock hours to ~95% | Work that dominates |
 |---|---|---|---|
-| Full target (ready for real work) | ~47% | ~327–629 h | multiplayer (45–90), localization (45–75), plugins (15–40), the interaction pass (40–60), `.fig` import (30–60), GPU canvas (30–60), AI (30–60) |
-| Mainstream practitioner | ~43% | ~162–304 h | core editor depth incl. `.fig` import (80–157), the interaction pass (40–60), real-file corpus and platform QA (25–50), `.fig` export for handing work back (15–30) |
-| Essentials user | ~53% | ~85–160 h | `.fig` import so files people send open (30–60), core tool polish (25–45), interaction pass on the core tools (15–25), stability QA (10–20), onboarding and starter templates (5–10) |
+| Full target (ready for real work) | ~49% | ~305–584 h | multiplayer (45–90), localization (45–75), plugins (15–40), the interaction pass (40–60), GPU canvas (30–60), AI (30–60), the `.fig` import's tail (8–15) |
+| Mainstream practitioner | ~46% | ~140–259 h | core editor depth incl. the `.fig` import's tail (58–112), the interaction pass (40–60), real-file corpus and platform QA (25–50), `.fig` export for handing work back (15–30) |
+| Essentials user | ~57% | ~63–115 h | the `.fig` import's tail so the files people send open well (8–15), core tool polish (25–45), interaction pass on the core tools (15–25), stability QA (10–20), onboarding and starter templates (5–10) |
 
 Hours are one agent working sequentially, calibrated from this repo's history (about 1 agent-hour
 per 1,000 added lines, 1–2.5 h per feature PR, ~7 h per honest depth point in the polish tail; see
@@ -45,9 +45,9 @@ lines, a typical feature PR 1–2.5 h). Details and what needs a human:
 
 **Alpha.** Core workflows exist end to end (frames, shapes, vectors, text, auto layout, components
 with variants and overrides, styles, variables, prototyping, Dev Mode, SVG/PNG/JPG/PDF), but
-FigCraft can't open Figma's own `.fig` files, has only a preview of multiplayer, and nothing has been checked
-against real Figma documents. Ready-for-real-work is ~47%, inside alpha's ~40–75% band, and the alpha gate passes: every daily core workflow (design screens, build a design system, prototype, hand off to developers) works end to end on FigCraft's own files, which save and reopen; review works only asynchronously and `.fig` import is missing, both beta gaps ([alpha gate](docs/roadmap.md#alpha-gate)). Beta needs
-~75% **and** reliable `.fig` import: the `.fig` reader (30–60 h), a real-file corpus with measured
+FigCraft opens `.fig` files only best effort, has only a preview of multiplayer, and nothing has been checked
+against real Figma documents. Ready-for-real-work is ~49%, inside alpha's ~40–75% band, and the alpha gate passes: every daily core workflow (design screens, build a design system, prototype, hand off to developers) works end to end on FigCraft's own files, which save and reopen; review works only asynchronously and `.fig` import is unproven on real files, both beta gaps ([alpha gate](docs/roadmap.md#alpha-gate)). Beta needs
+~75% **and** reliable `.fig` import: the `.fig` import's tail (8–15 h), a real-file corpus with measured
 fidelity (15–30 h), the interaction pass (25–40 h of the 40–60), core depth to ~80% (40–75 h),
 basic multiplayer on the landed core (30–55 h), stability and platform QA (20–40 h), a partial GPU path (15–30 h) and
 Figma's own languages on the landed localization layer (15–25 h).
@@ -58,7 +58,7 @@ Figma's own languages on the landed localization layer (15–25 h).
 |---|---|---|---|
 | Features (depth) | 57% (core editor 67%) | 59–112 | [target-app-parity](docs/target-app-parity.md) |
 | UI/UX fidelity | 58% | 40–60 | [ui-parity](docs/ui-parity.md) |
-| File formats | 40% (no `.fig`) | 30–60 | [file-format-parity](docs/file-format-parity.md) |
+| File formats | 55% (`.fig` read best effort, no write) | 8–15 | [file-format-parity](docs/file-format-parity.md) |
 | Collaboration | 13% (core in; live sessions with document sync, cursors and text carets, the browser joins, invite links open the app; a self-hosted server with edit and view links and team libraries; preview) | 49–98 | [collaboration-parity](docs/collaboration-parity.md) |
 | Stability | 55% | 20–40 | [gaps](docs/gaps.md) |
 | Performance | 60% | 30–60 | [hardware-parity](docs/hardware-parity.md) |
@@ -120,7 +120,7 @@ shaping, IME) already works. Detail: [`docs/localization-parity.md`](docs/locali
 
 Ranked; detail and milestones in [`docs/roadmap.md`](docs/roadmap.md).
 
-1. `.fig` import, best effort, with a synthetic `.fig` corpus: 30–60 h.
+1. `.fig` import's tail: editable vector networks, the skipped layer kinds that matter, fixes from real files (the best-effort import landed 2026-10-11): 8–15 h.
 2. Real-file corpus and measured fidelity: 15–30 h.
 3. Tool-by-tool interaction pass against Figma: 40–60 h.
 4. Languages on the landed localization layer: ja, ko, pt-BR, fr, de, and a native review of es: 15–30 h.
@@ -128,6 +128,11 @@ Ranked; detail and milestones in [`docs/roadmap.md`](docs/roadmap.md).
 
 ## Progress log
 
+- **2026-10-11** · `.fig` import, best effort (gap 1): `file.open`, `file.import`, drag and drop, the CLI and
+  MCP open `.fig` files. A generic kiwi decoder reads each file's own schema, and the decoded nodes map by field name
+  onto the REST importer: layers, paints and styles, text runs, vectors as outlines, auto layout, components and
+  instances (expanded with their overrides and property values), variables, prototyping and images from the archive;
+  the rest is a warning. File formats 55%, ready ~49%.
 - **2026-10-11** · Gamut warnings (gap 18): the colour picker of a Display P3 file flags colours
   outside sRGB and View ▸ Soft-proof sRGB stripes them on the canvas. Showing P3 itself waits on
   eframe/egui-wgpu exposing the surface colour space wgpu 30 already supports.
@@ -190,7 +195,8 @@ Ranked; detail and milestones in [`docs/roadmap.md`](docs/roadmap.md).
 
 | Date | Change | Summary |
 |---|---|---|
-| 2026-10-11 | minor | Layers panel keyboard and stroke variables: F2 renames the selected layer (also from a layer row with the keyboard, which gets it back; Escape there cancels), Shift+F10 (`view.contextMenu`) opens the context menu at the focused row or below the canvas selection and the menu takes the keyboard, F8 (`select.area`) draws a selection box for keyboard-only users (arrows move it, Shift+arrows size it, Enter selects like a marquee; agents pass a box), long lists checked at 10k layers (revealing a layer, expanding or collapsing everything and arrow keys take at most 1.3 ms a frame in the release UI bench; the revealed row takes the keyboard); colour styles on strokes were already complete, and each side's stroke weight now binds to a number variable (`strokeTopWeight`…, bindable fields in the Design panel and REST import). Layers panel 95%/78% → 98%/82%, 2–4 h → 1–2 h; Strokes 90%/72% → 95%/75%, 1–3 h → 1–2 h; feature breadth (~79%), ready for real work (~47%), essentials (~53%) and mainstream (~43%) unchanged at this rounding; full parity ~345–666 h → ~344–663 h |
+| 2026-10-11 | minor | Layers panel keyboard and stroke variables: F2 renames the selected layer (also from a layer row with the keyboard, which gets it back; Escape there cancels), Shift+F10 (`view.contextMenu`) opens the context menu at the focused row or below the canvas selection and the menu takes the keyboard, F8 (`select.area`) draws a selection box for keyboard-only users (arrows move it, Shift+arrows size it, Enter selects like a marquee; agents pass a box), long lists checked at 10k layers (revealing a layer, expanding or collapsing everything and arrow keys take at most 1.3 ms a frame in the release UI bench; the revealed row takes the keyboard); colour styles on strokes were already complete, and each side's stroke weight now binds to a number variable (`strokeTopWeight`…, bindable fields in the Design panel and REST import). Layers panel 95%/78% → 98%/82%, 2–4 h → 1–2 h; Strokes 90%/72% → 95%/75%, 1–3 h → 1–2 h; mainstream depth 67.8% → 68.1%; feature breadth (~80%), ready for real work (~49%), essentials (~57%) and mainstream (~46%) unchanged at this rounding; full parity ~323–621 h → ~322–618 h |
+| 2026-10-11 | minor | Windows QA pass (gap 8): everyday workflows on Windows 11 in the desktop app and through MCP; eight fixes: recovery copies of unsaved documents reopen after a crash or a forced quit (`file.recover`), Ctrl moves and deletes by word in text on Windows and Linux, scrubbed fields keep their value, typing on a field Tab reached edits it, Escape closes dialogs, linear gradients keep square bands, panel hints wrap, the window-close question and "Open in new window" are translated. Percentages and hours unchanged |
 | 2026-10-11 | minor | Auto layout behaviour suite written from the public documentation (64 layout cases, 8 command tests) and its fixes: a frame is never smaller than its padding, only the frame's inside stroke counts when strokes are included (and new auto layout includes them), auto gaps stop at 0, grid `fr` tracks behave like the CSS `fr` unit (a track never gets less than its content), canvas stacking is drawn, exported and hit (it was stored only). Added: auto gaps evenly and around, vertical wrap, grid cell alignment, strokes and canvas stacking controls. Auto layout 95%/68% → 98%/74%, 6–12 h → 3–6 h; percentages unchanged at this rounding; full parity ~348–672 h → ~345–666 h |
 | 2026-10-11 | minor | Display P3 honest minimum (gap 18): the colour picker of a Display P3 file warns when a colour is outside sRGB (Outside sRGB, with what the canvas and exports do), and View ▸ Soft-proof sRGB (`view.proofSrgb`) stripes the canvas pixels sRGB can't show. Why the canvas still shows sRGB: wgpu 30 can present Display P3 or extended-range sRGB surfaces (Metal, DX12, Vulkan, WebGPU canvases), but eframe/egui-wgpu 0.36 configure an 8-bit sRGB surface with no option for the format or colour space, and egui's renderer writes sRGB-encoded UI colours; showing P3 needs those two upstream (or a patched egui-wgpu). Hardware 13–27 h → 12–26 h; gap 18 6–12 h → 5–11 h; percentages, feature breadth (~79%) and ready for real work (~47%) unchanged at this rounding; full parity ~363–697 h → ~362–696 h |
 | 2026-10-11 | minor | Several windows (gap 18): File ▸ New window, a tab's Open in new window or a tab dragged off the tab strip opens files in another window with its own tabs, panels and canvas, sharing the files, preferences, libraries and clipboard; each window draws only when it needs to (idle: ~0% CPU), closing one closes its files after asking about unsaved changes (the main window too, which takes over another window instead of quitting; the last window quits), and the control channel and MCP open, list, focus and capture windows (`window.new`, `window.list`, `window.focus`, `window` on any request); the screen-reader tree covers the main window only (eframe 0.36), so with a screen reader running files stay tabs; one window in the browser. Hardware 55% → 60%, 13–27 h → 10–21 h; gap 18 6–12 h → 4–8 h (P3 on screen left); feature breadth (~79%) and ready for real work (~47%) unchanged at this rounding; full parity ~363–697 h → ~360–691 h |

@@ -115,6 +115,8 @@ mod titlebar_tests;
 #[cfg(test)]
 mod vector_tail_ui_tests;
 #[cfg(test)]
+mod windows_qa_tests;
+#[cfg(test)]
 mod windows_tests;
 
 use std::collections::BTreeSet;
@@ -492,6 +494,13 @@ impl FigApp {
         self.ui.toast = Some((msg.into(), None));
     }
 
+    /// Say that `n` documents left unsaved by a crash were opened again from recovery copies.
+    pub fn note_recovered(&mut self, n: usize) {
+        if n > 0 {
+            self.toast(i18n::trn("Recovered {n} unsaved files after the app quit unexpectedly: save them to keep them", n, &[]));
+        }
+    }
+
     /// Act on UI requests queued by commands (dialogs, panels).
     pub fn handle_ui_requests(&mut self) {
         let reqs = std::mem::take(&mut self.session.ui_requests);
@@ -615,7 +624,9 @@ impl FigApp {
     }
 
     pub fn open_dialog(&mut self) {
-        if let Some(p) = self.services.pick_open(i18n::tr("Open"), &["figcraft", "json", "svg", "png", "jpg", "jpeg", "webp", "gif", "tif", "tiff"]) {
+        if let Some(p) =
+            self.services.pick_open(i18n::tr("Open"), &["figcraft", "fig", "json", "svg", "png", "jpg", "jpeg", "webp", "gif", "tif", "tiff"])
+        {
             let ps = p.to_string_lossy().to_string();
             if self.run("file.open", json!({"path": ps})).is_some() {
                 self.ui.home = false;
@@ -627,7 +638,7 @@ impl FigApp {
         let exts: &[&str] = if place {
             &["png", "jpg", "jpeg", "webp", "gif", "tif", "tiff"]
         } else {
-            &["svg", "png", "jpg", "jpeg", "webp", "gif", "tif", "tiff", "figcraft"]
+            &["svg", "png", "jpg", "jpeg", "webp", "gif", "tif", "tiff", "figcraft", "fig"]
         };
         if let Some(p) = self.services.pick_open(if place { i18n::tr("Place image") } else { i18n::tr("Import") }, exts) {
             let ps = p.to_string_lossy().to_string();
@@ -750,6 +761,7 @@ impl FigApp {
         if !self.has_files() || self.ui.home {
             tabs::tab_bar(self, ui);
             home::show(self, ui);
+            dialogs::keys(self, &ctx);
             dialogs::show(self, &ctx);
             windows::requests(self, &ctx);
             return;
@@ -817,6 +829,7 @@ impl FigApp {
         dev_compare::keys(self, &ctx);
         branch_ui::keys(self, &ctx);
         live::dialog_keys(self, &ctx);
+        dialogs::keys(self, &ctx);
         shortcuts::handle(self, &ctx, typing);
         menus::popups(self, &ctx);
         variable_ui::picker(self, &ctx);
