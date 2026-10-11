@@ -33,6 +33,7 @@ pub mod plugins;
 pub mod proto_run;
 pub mod shapebuilder;
 pub mod snap;
+pub mod spelling;
 pub mod synthetic;
 pub mod synthetic_ds;
 pub mod textedit;
@@ -455,6 +456,10 @@ pub struct Prefs {
     /// `figcraft://` invite links open this app (`collab.registerLinks`); `None`: on for installed
     /// builds, off for development builds.
     pub invite_links: Option<bool>,
+    /// Underline misspelled words while editing text (`text.spelling`).
+    pub spell_check: bool,
+    /// Words never flagged as misspelled (`spelling.addWord`), lowercased.
+    pub dictionary: Vec<String>,
     /// Installed plugins (Plugins menu), in menu order.
     #[serde(serialize_with = "plugins::persisted")]
     pub plugins: Vec<plugins::InstalledPlugin>,
@@ -474,6 +479,8 @@ impl Default for Prefs {
             user_name: cmd::comment::DEFAULT_AUTHOR.into(),
             reduce_motion: false,
             invite_links: None,
+            spell_check: true,
+            dictionary: Vec::new(),
             plugins: Vec::new(),
         }
     }
@@ -525,6 +532,8 @@ pub struct Session {
     pub plugins: plugins::Runtime,
     /// The live session (collaboration): status, peers, presence.
     pub live: live::Live,
+    /// Spell check while editing text.
+    pub spelling: spelling::Spelling,
 }
 
 impl Default for Session {
@@ -557,6 +566,7 @@ impl Session {
             libraries: library::Cache::default(),
             plugins: plugins::Runtime::default(),
             live: live::Live::default(),
+            spelling: spelling::Spelling::default(),
         }
     }
 
@@ -1218,6 +1228,8 @@ mod selection_depth_tests;
 mod shapebuilder_tests;
 #[cfg(test)]
 mod slot_tests;
+#[cfg(test)]
+mod spelling_tests;
 #[cfg(test)]
 mod style_tests;
 #[cfg(test)]

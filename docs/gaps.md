@@ -1,6 +1,6 @@
 # Where FigCraft falls short of Figma
 
-> **Last reviewed:** 2026-10-10 · **Last updated:** 2026-10-11 · **Change:** minor (wording: live sessions, the browser joins them, invite links open the app; collaboration polish: collision-free ids, remote text carets; numbers unchanged) · **Target:** Figma Design (desktop app 126.10.7)
+> **Last reviewed:** 2026-10-10 · **Last updated:** 2026-10-11 · **Change:** minor (spell check while editing text on Windows and macOS; menu breadth 201/204) · **Target:** Figma Design (desktop app 126.10.7)
 
 Every known shortfall against Figma, one entry each, ranked by how much it stops a Figma user from
 doing real work in FigCraft. Agents: pick work from the top unless the owner says otherwise. The
@@ -24,7 +24,7 @@ No alpha blockers: the alpha gate in [`roadmap.md`](roadmap.md#alpha-gate) passe
 | 8 | Platform QA is mostly macOS | Stability/platforms | 10–20 | [hardware-parity](hardware-parity.md) |
 | 9 | Figma Draw: brushes, pressure, text on a path, pattern fills | Feature | 10–18 | [target-app-parity](target-app-parity.md) |
 | 10 | Shared (team) libraries | Feature | 10–20 | [components-parity](components-parity.md) |
-| 11 | Spell check | Feature | 4–8 | [target-app-parity](target-app-parity.md) |
+| 11 | Spell check on Linux, FreeBSD and the web; one language | Feature | 2–5 | [target-app-parity](target-app-parity.md) |
 | 12 | Video and animated GIF fills; HEIC/TIFF images | File format | 6–12 | [file-format-parity](file-format-parity.md) |
 | 13 | Live boolean editing and the vector tail | Feature | 6–10 | [target-app-parity](target-app-parity.md) |
 | 14 | Variables: extended collections, import/export | Feature | 4–8 | [components-parity](components-parity.md) |
@@ -148,11 +148,15 @@ No alpha blockers: the alpha gate in [`roadmap.md`](roadmap.md#alpha-gate) passe
 - **Impact:** design-system teams. Builds on multiplayer's server.
 - **Estimate:** 10–20 h after gap 2.
 
-### 11. Spell check
-- **Missing:** spelling underline and suggestions while editing text.
-- **Evidence:** no spell-check code in the repo.
-- **Estimate:** 4–8 h with a permissively licensed dictionary and checker (provenance per
-  `ATTRIBUTION.md`).
+### 11. Spell check on Linux, FreeBSD and the web; one language
+- **Have:** misspelled words in the text being edited get a wavy underline; right-click one for
+  suggestions, Ignore (until the app quits) and Add to dictionary (saved in preferences); Text ▸
+  Spelling ▸ Check spelling, on by default (`crates/engine/src/spelling.rs`). The desktop app uses
+  the system's checker on Windows and macOS, in the system's language.
+- **Missing:** a checker on Linux and FreeBSD (hunspell or enchant) and in the browser; choosing the
+  language (Text ▸ Spelling ▸ Language); text in scripts written without spaces (CJK, Thai) isn't
+  checked; Add to dictionary doesn't reach the system's dictionary.
+- **Estimate:** 2–5 h.
 
 ### 12. Video and animated GIF fills; HEIC/TIFF images
 - **Missing:** Figma takes JPG, PNG, HEIC, WebP, GIF and TIFF images and MP4, MOV and WebM video
@@ -218,6 +222,7 @@ No alpha blockers: the alpha gate in [`roadmap.md`](roadmap.md#alpha-gate) passe
 
 | Date | Change | Summary |
 |---|---|---|
+| 2026-10-11 | minor | Spell check while editing text: misspelled words underlined, suggestions, Ignore and Add to dictionary in the context menu, Text ▸ Spelling ▸ Check spelling (the system's checker on Windows and macOS, in the system's language; none on Linux, FreeBSD or the web yet). Text 85% → 88% breadth, 64% → 66% ready, 8–14 h → 5–10 h; menu breadth 200/203 → 201/204 (98.5%); gap 11 narrowed to the remaining platforms and languages (4–8 h → 2–5 h); weighted percentages unchanged, hour totals down 3–4 h (headline ranges unchanged within their rounding) |
 | 2026-10-11 | minor | Collaboration wording after the collaboration polish: styles, variables, collections, modes and comments created in a live session take ids from their creator's id space (concurrent creations no longer overwrite each other; the server checks it), others' text carets and selections show on the canvas, and typing in a layer someone else is typing in says so; percentages unchanged |
 | 2026-10-11 | minor | Wording only: live sessions (#104), then the browser joining them and `figcraft://` invite links opening the desktop app; percentages and hours unchanged until the next re-measure |
 | 2026-10-10 | minor | Merged main after #101–#103: WASM plugins (plugins area 0% → 35% breadth, 20% ready; ecosystem 5% → 20%) and the multiplayer core without networking (multiplayer 5% → 15% breadth, 5% ready; collaboration 8% → 12%); menu breadth 97.5% → 98.5% (200/203); ready for real work ~46% → ~47%; full parity 420–790 h → 390–745 h; beta 210–380 h → 200–365 h. Fixed the stated weight sums (areas 1–16 sum to 94, total 113; percentages were already computed with those) |
