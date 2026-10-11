@@ -1310,6 +1310,7 @@ mod section_contents_tests;
 mod section_tests;
 #[cfg(test)]
 mod select_area_tests;
+#[cfg(test)]
 mod selection_behaviour_tests;
 #[cfg(test)]
 mod selection_depth_tests;
