@@ -22,7 +22,7 @@ pub fn specs() -> Vec<CommandSpec> {
         spec!(
             "file.open",
             "Open",
-            "{path, variables? (REST: the local variables JSON as an object, JSON text or a path; default `<name>.variables.json` or `variables.json` next to the file)} (.figcraft, .json: FigCraft or REST API file JSON, .svg, .png, .jpg …); REST imports return `warnings`",
+            "{path, variables? (REST: the local variables JSON as an object, JSON text or a path; default `<name>.variables.json` or `variables.json` next to the file)} (.figcraft, .json: FigCraft or REST API file JSON, .fig (best effort), .svg, .png, .jpg …); REST and .fig imports return `warnings`",
             false,
             open
         ),
@@ -66,12 +66,26 @@ pub fn specs() -> Vec<CommandSpec> {
         spec!(
             "file.import",
             "Import",
-            "{path | data (base64) + name, x?, y?, center? (SVG: centre it on x, y), variables? (REST: the local variables JSON as an object, JSON text or a path)}  SVG becomes an editable frame (shapes, text, gradients, masks, effects; with `warnings` for what it left out), images become image layers, .figcraft and REST API file JSON pages are appended with their variables and flows (REST: with `warnings`)",
+            "{path | data (base64) + name, x?, y?, center? (SVG: centre it on x, y), variables? (REST: the local variables JSON as an object, JSON text or a path)}  SVG becomes an editable frame (shapes, text, gradients, masks, effects; with `warnings` for what it left out), images become image layers, .figcraft, REST API file JSON and .fig pages are appended with their variables and flows (REST and .fig: with `warnings`)",
             true,
             import
         ),
         spec!("file.placeImage", "Place image", "{path | data, x?, y?}", true, super::create::place_image),
         spec!("file.close", "Close tab", "{index?, force? (discard unsaved changes)}", false, close),
+        spec!(
+            "file.recover",
+            "Recover file",
+            "{path}  open a recovery copy (written while the app runs, read back after a crash) as a document with unsaved changes and no path: saving asks where → {index}",
+            false,
+            |s, p| {
+                let path = req_string("file.recover", p, "path")?;
+                let loaded =
+                    read(&path).and_then(|b| figcraft_format::load_bytes_with_versions(&b).map_err(|e| EngineError::Other(e.to_string())))?;
+                s.docs.push(DocState::new(loaded.doc, None).with_versions(loaded.versions).with_branches(loaded.branches).unsaved());
+                s.active = s.docs.len() - 1;
+                Ok(json!({"index": s.active}))
+            }
+        ),
         spec!("file.rename", "Rename file", "{name}", true, |s, p| {
             let name = req_string("file.rename", p, "name")?;
             s.doc_mut()?.name = name;
@@ -417,8 +431,8 @@ pub fn load_path(path: &str, variables: Option<&Value>) -> Result<(figcraft_form
 }
 
 /// Load from bytes. Returns the document with its notes (repairs of a native file, or import
-/// warnings) and version history, and whether it was imported from REST API file JSON (such a file
-/// is never saved over). `variables`: the local variables JSON for a REST API file JSON.
+/// warnings) and version history, and whether it was imported from REST API file JSON or a `.fig`
+/// file (such a file is never saved over). `variables`: the local variables JSON for a REST API file JSON.
 fn load_with(
     bytes: &[u8],
     name_hint: &str,
@@ -443,6 +457,11 @@ fn load_with(
             Ok((doc.into(), false))
         }
         _ => {
+            if let Some(r) = figcraft_format::fig::try_import(bytes, &file_stem(name_hint)) {
+                let (mut doc, warnings) = r.map_err(|e| EngineError::Other(e.to_string()))?;
+                link_instances(&mut doc);
+                return Ok((figcraft_format::Loaded { issues: warnings, ..doc.into() }, true));
+            }
             if let Some(r) = figcraft_format::rest::try_import_with(bytes, variables, images) {
                 let (mut doc, warnings) = r.map_err(|e| EngineError::Other(e.to_string()))?;
                 link_instances(&mut doc);
@@ -963,7 +982,7 @@ fn import(s: &mut Session, p: &Value) -> Result<Value> {
             }
             Ok(out)
         }
-        "figcraft" | "json" => {
+        "figcraft" | "json" | "fig" => {
             let resolver = path.as_deref().map(rest_images);
             let images: figcraft_format::rest::ImageResolver = match &resolver {
                 Some(r) => r,

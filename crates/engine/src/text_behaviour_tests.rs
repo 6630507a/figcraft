@@ -103,6 +103,14 @@ fn word_selection_and_motion_follow_scripts() {
         key(&mut s, "Left", false, true, false).unwrap();
         assert_eq!(caret(&s).1, want, "word left");
     }
+    // The platforms' word keys reach the same moves: Ctrl+arrow on Windows and Linux, Alt on macOS.
+    use crate::keymap::{Mods, Platform, text_motion};
+    for (platform, m) in [(Platform::Other, Mods { ctrl: true, ..Default::default() }), (Platform::Mac, Mods { alt: true, ..Default::default() })] {
+        crate::textedit::set_caret(&mut s, 0, false).unwrap();
+        let (word, line) = text_motion(platform, "ArrowRight", m);
+        key(&mut s, "ArrowRight", false, word, line).unwrap();
+        assert_eq!(caret(&s).1, 3, "{platform:?}: one word right");
+    }
 }
 
 #[test]
