@@ -1309,6 +1309,10 @@ mod section_contents_tests;
 #[cfg(test)]
 mod section_tests;
 #[cfg(test)]
+mod select_area_tests;
+#[cfg(test)]
+mod selection_behaviour_tests;
+#[cfg(test)]
 mod selection_depth_tests;
 #[cfg(test)]
 mod shapebuilder_strokes_tests;
@@ -1317,11 +1321,15 @@ mod shapebuilder_tests;
 #[cfg(test)]
 mod slot_tests;
 #[cfg(test)]
+mod stroke_style_tests;
+#[cfg(test)]
 mod style_tests;
 #[cfg(test)]
 mod svg_import_tests;
 #[cfg(test)]
 mod tests;
+#[cfg(test)]
+mod text_behaviour_tests;
 #[cfg(test)]
 mod text_fill_tests;
 #[cfg(test)]
@@ -1330,6 +1338,8 @@ mod text_motion_tests;
 mod text_style_picker_tests;
 #[cfg(test)]
 mod tiff_tests;
+#[cfg(test)]
+mod transform_behaviour_tests;
 #[cfg(test)]
 mod variable_tests;
 #[cfg(test)]
