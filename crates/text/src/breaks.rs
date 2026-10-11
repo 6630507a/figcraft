@@ -21,19 +21,24 @@ enum Class {
     Other,
 }
 
+/// Opening brackets and quotes (line-end prohibited).
+const OPEN: &str = "([{‘“〈《「『【〔〖〘〚〝（［｛｢";
+/// Closing brackets, quotes and punctuation, iteration marks, small kana and the prolonged sound
+/// mark (line-start prohibited; the small katakana extensions U+31F0..U+31FF are a range below).
+const CLOSE: &str =
+    ")]},.:;!?’”‥…‼⁇⁈⁉、。々〉》」』】〕〗〙〛〜〞〟〻ぁぃぅぇぉっゃゅょゎゕゖゝゞ゠ァィゥェォッャュョヮヵヶ・ーヽヾ！），．：；？］｝｡｣､･ｰ";
+
 fn class(c: char) -> Class {
+    if c.is_ascii_alphanumeric() {
+        return Class::Other;
+    }
+    if OPEN.contains(c) {
+        return Class::Open;
+    }
+    if CLOSE.contains(c) || ('\u{31F0}'..='\u{31FF}').contains(&c) {
+        return Class::Close;
+    }
     match c {
-        '(' | '[' | '{' | '\u{2018}' | '\u{201C}' | '\u{3008}' | '\u{300A}' | '\u{300C}' | '\u{300E}' | '\u{3010}' | '\u{3014}'
-        | '\u{3016}' | '\u{3018}' | '\u{301A}' | '\u{301D}' | '\u{FF08}' | '\u{FF3B}' | '\u{FF5B}' | '\u{FF62}' => Class::Open,
-        ')' | ']' | '}' | ',' | '.' | ':' | ';' | '!' | '?' | '\u{2019}' | '\u{201D}' | '\u{2025}' | '\u{2026}' | '\u{203C}'
-        | '\u{2047}'..='\u{2049}' | '\u{3001}' | '\u{3002}' | '\u{3005}' | '\u{3009}' | '\u{300B}' | '\u{300D}' | '\u{300F}'
-        | '\u{3011}' | '\u{3015}' | '\u{3017}' | '\u{3019}' | '\u{301B}' | '\u{301C}' | '\u{301E}' | '\u{301F}' | '\u{303B}'
-        | '\u{3041}' | '\u{3043}' | '\u{3045}' | '\u{3047}' | '\u{3049}' | '\u{3063}' | '\u{3083}' | '\u{3085}' | '\u{3087}'
-        | '\u{308E}' | '\u{3095}' | '\u{3096}' | '\u{309D}' | '\u{309E}' | '\u{30A0}' | '\u{30A1}' | '\u{30A3}' | '\u{30A5}'
-        | '\u{30A7}' | '\u{30A9}' | '\u{30C3}' | '\u{30E3}' | '\u{30E5}' | '\u{30E7}' | '\u{30EE}' | '\u{30F5}' | '\u{30F6}'
-        | '\u{30FB}' | '\u{30FC}' | '\u{30FD}' | '\u{30FE}' | '\u{31F0}'..='\u{31FF}' | '\u{FF01}' | '\u{FF09}' | '\u{FF0C}'
-        | '\u{FF0E}' | '\u{FF1A}' | '\u{FF1B}' | '\u{FF1F}' | '\u{FF3D}' | '\u{FF5D}' | '\u{FF61}' | '\u{FF63}'..='\u{FF65}'
-        | '\u{FF70}' => Class::Close,
         ' ' | '\t' | '\u{3000}' | '\u{2002}'..='\u{200B}' => Class::Space,
         '-' | '/' | '\u{2010}' | '\u{2013}' | '\u{2014}' => Class::Hyphen,
         '\u{2E80}'..='\u{2FFF}'

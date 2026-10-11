@@ -103,11 +103,23 @@ pub fn insert(s: &mut Session, text: &str) -> Result<()> {
 /// ends where the script changes (Han, hiragana, katakana and Hangul runs are words of their own in
 /// text without spaces). Combining marks and voicing marks belong to the char before them.
 fn word_class(chars: &[char], mut i: usize) -> u8 {
-    while i > 0 && chars.get(i).is_some_and(|c| matches!(*c as u32, 0x0300..=0x036F | 0x1AB0..=0x1AFF | 0x1DC0..=0x1DFF | 0x20D0..=0x20FF | 0x3099..=0x309A | 0xFE20..=0xFE2F)) {
+    while i > 0
+        && chars.get(i).is_some_and(
+            |c| matches!(*c as u32, 0x0300..=0x036F | 0x1AB0..=0x1AFF | 0x1DC0..=0x1DFF | 0x20D0..=0x20FF | 0x3099..=0x309A | 0xFE20..=0xFE2F),
+        )
+    {
         i -= 1;
     }
     match chars.get(i).copied() {
-        Some('\u{3005}' | '\u{3006}' | '\u{3007}' | '\u{3400}'..='\u{4DBF}' | '\u{4E00}'..='\u{9FFF}' | '\u{F900}'..='\u{FAFF}' | '\u{20000}'..='\u{3FFFF}') => 2,
+        Some(
+            '\u{3005}'
+            | '\u{3006}'
+            | '\u{3007}'
+            | '\u{3400}'..='\u{4DBF}'
+            | '\u{4E00}'..='\u{9FFF}'
+            | '\u{F900}'..='\u{FAFF}'
+            | '\u{20000}'..='\u{3FFFF}',
+        ) => 2,
         Some('\u{3041}'..='\u{309F}') => 3,
         Some('\u{30A0}'..='\u{30FF}' | '\u{31F0}'..='\u{31FF}' | '\u{FF66}'..='\u{FF9F}') => 4,
         Some('\u{1100}'..='\u{11FF}' | '\u{3130}'..='\u{318F}' | '\u{AC00}'..='\u{D7AF}') => 5,

@@ -439,7 +439,8 @@ fn type_settings(
         ui.add_space(6.0);
         let indent = common(doc, ids, |n| n.kind.text().map(|t| t.paragraph_indent.to_bits())).flatten().map(f64::from_bits);
         // Indent applies to start-aligned text only; elsewhere the field stays visible but off.
-        let start_aligned = common(doc, ids, |n| n.kind.text().map(|t| t.align_h != TextAlignH::Center && t.align_h != TextAlignH::Justified)).flatten();
+        let start_aligned =
+            common(doc, ids, |n| n.kind.text().map(|t| t.align_h != TextAlignH::Center && t.align_h != TextAlignH::Justified)).flatten();
         ui.horizontal(|ui| {
             ui.add_enabled_ui(start_aligned != Some(false), |ui| {
                 ui.add_sized(vec2(110.0, FIELD_H), egui::Label::new(egui::RichText::new(tr("Paragraph indent")).font(regular(11.0)).color(t.text)));

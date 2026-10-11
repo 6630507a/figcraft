@@ -340,4 +340,3 @@ fn a_cluster_is_shaped_with_one_face() {
         assert_eq!(faces.len(), 1, "{s:?}");
     }
 }
-
