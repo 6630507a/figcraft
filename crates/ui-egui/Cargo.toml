@@ -24,6 +24,12 @@ log = { workspace = true }
 base64 = { workspace = true }
 image = { workspace = true }
 egui_extras = { workspace = true }
+figcraft-render-gpu = { workspace = true, optional = true }
+
+[features]
+# Experimental GPU canvas (vello), off by default: Preferences ▸ GPU canvas, or `ui.set
+# {"gpuCanvas": true}`. Desktop only; exports and the CLI/MCP keep the CPU renderer.
+gpu-canvas = ["dep:figcraft-render-gpu"]
 
 [build-dependencies]
 serde_json = { workspace = true }

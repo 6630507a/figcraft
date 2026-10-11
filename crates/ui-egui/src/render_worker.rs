@@ -21,6 +21,8 @@ pub struct Job {
     pub skip: Vec<NodeId>,
     /// Only this layer (the focus view).
     pub solo: Option<NodeId>,
+    /// Render on the GPU where it can (the experimental `gpu-canvas` feature).
+    pub gpu: bool,
 }
 
 pub struct Done {
@@ -30,6 +32,31 @@ pub struct Done {
     pub view: View,
     pub ms: f64,
     pub work: Work,
+    /// Rendered on the GPU, or why it fell back to the CPU (`None`: not asked for).
+    pub gpu: Option<Result<(), &'static str>>,
+}
+
+/// The GPU canvas, made on first use (`gpu-canvas` feature, desktop).
+#[derive(Default)]
+struct Gpu {
+    #[cfg(all(feature = "gpu-canvas", not(target_arch = "wasm32")))]
+    canvas: Option<Result<figcraft_render_gpu::Canvas, String>>,
+}
+
+impl Gpu {
+    /// `job` rendered on the GPU, or why not (`None`: not asked for).
+    fn render(&mut self, job: &Job, opts: &figcraft_render::Options) -> Option<Result<Pixmap, &'static str>> {
+        #[cfg(all(feature = "gpu-canvas", not(target_arch = "wasm32")))]
+        if job.gpu {
+            let canvas = self.canvas.get_or_insert_with(|| figcraft_render_gpu::Canvas::new().inspect_err(|e| log::warn!("gpu canvas: {e}")));
+            return Some(match canvas {
+                Ok(c) => c.render(&job.doc, job.page, &job.view, opts),
+                Err(_) => Err("no GPU adapter"),
+            });
+        }
+        let _ = (self, job, opts);
+        None
+    }
 }
 
 /// A render of a document in `profile` as a texture image for the screen (sRGB).
@@ -43,7 +70,7 @@ pub fn screen_image(pix: &Pixmap, profile: ColorProfile) -> egui::ColorImage {
     egui::ColorImage::from_rgba_premultiplied(size, &data)
 }
 
-fn run(job: &Job, retained: &mut Retained) -> Option<Done> {
+fn run(job: &Job, retained: &mut Retained, gpu: &mut Gpu) -> Option<Done> {
     #[cfg(not(target_arch = "wasm32"))]
     let t0 = std::time::Instant::now();
     // The canvas is a preview: what's too small to see in detail at this zoom is approximated.
@@ -55,13 +82,19 @@ fn run(job: &Job, retained: &mut Retained) -> Option<Done> {
         lod: true,
         ..Default::default()
     };
-    let (view, pix, work) = retained.render(&job.doc, job.page, &job.view, &opts)?;
-    let image = screen_image(pix, job.doc.color_profile);
+    let tried = gpu.render(job, &opts);
+    let (view, image, work) = match &tried {
+        Some(Ok(pix)) => (job.view.clone(), screen_image(pix, job.doc.color_profile), Work::Full),
+        _ => {
+            let (view, pix, work) = retained.render(&job.doc, job.page, &job.view, &opts)?;
+            (view, screen_image(pix, job.doc.color_profile), work)
+        }
+    };
     #[cfg(not(target_arch = "wasm32"))]
     let ms = t0.elapsed().as_secs_f64() * 1000.0;
     #[cfg(target_arch = "wasm32")]
     let ms = 0.0;
-    Some(Done { image, view, ms, work })
+    Some(Done { image, view, ms, work, gpu: tried.map(|r| r.map(|_| ())) })
 }
 
 #[cfg(not(target_arch = "wasm32"))]
@@ -84,12 +117,13 @@ impl Worker {
         let done_with = finished.clone();
         let spawned = std::thread::Builder::new().name("figcraft-render".into()).spawn(move || {
             let mut retained = Retained::default();
+            let mut gpu = Gpu::default();
             while let Ok((mut seq, mut job)) = jobs.recv() {
                 // Skip to the newest queued job.
                 while let Ok(newer) = jobs.try_recv() {
                     (seq, job) = newer;
                 }
-                let res = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| run(&job, &mut retained)));
+                let res = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| run(&job, &mut retained, &mut gpu)));
                 let done = match res {
                     Ok(d) => d,
                     Err(_) => {
@@ -138,12 +172,13 @@ impl Worker {
 pub struct Worker {
     pending: Option<Job>,
     retained: Retained,
+    gpu: Gpu,
 }
 
 #[cfg(target_arch = "wasm32")]
 impl Worker {
     pub fn new(_ctx: egui::Context) -> Self {
-        Self { pending: None, retained: Retained::default() }
+        Self { pending: None, retained: Retained::default(), gpu: Gpu::default() }
     }
     pub fn submit(&mut self, job: Job) {
         self.pending = Some(job);
@@ -153,11 +188,11 @@ impl Worker {
     }
     pub fn poll(&mut self) -> Option<Done> {
         let job = self.pending.take()?;
-        run(&job, &mut self.retained)
+        run(&job, &mut self.retained, &mut self.gpu)
     }
 }
 
 /// Render synchronously from scratch (tests, screenshots).
 pub fn render_now(job: &Job) -> Option<Done> {
-    run(job, &mut Retained::default())
+    run(job, &mut Retained::default(), &mut Gpu::default())
 }

@@ -20,6 +20,10 @@ pub struct CanvasState {
     submitted: Option<JobKey>,
     /// What the last canvas render had to do (shown by `ui.inspect`).
     pub render_work: Option<figcraft_render::Work>,
+    /// Render the canvas on the GPU (the experimental `gpu-canvas` feature; CPU otherwise).
+    pub gpu: bool,
+    /// The last render: on the GPU, or why it fell back to the CPU (`None`: not asked for).
+    pub gpu_status: Option<Result<(), &'static str>>,
     dragging: bool,
     space_pan: bool,
     middle_pan: Option<(Pos2, f64, f64)>,
@@ -41,6 +45,8 @@ impl Default for CanvasState {
             tex_view: None,
             submitted: None,
             render_work: None,
+            gpu: false,
+            gpu_status: None,
             dragging: false,
             space_pan: false,
             middle_pan: None,
@@ -103,6 +109,7 @@ struct JobKey {
     solo: Option<NodeId>,
     /// Text lays out anew when fonts arrive (system fonts load in the background).
     fonts: u64,
+    gpu: bool,
 }
 
 impl FigApp {
@@ -174,6 +181,7 @@ pub fn show(app: &mut FigApp, ui: &mut Ui, worker: &mut Worker) {
         }
         app.canvas.tex_view = Some(done.view);
         app.canvas.render_work = Some(done.work);
+        app.canvas.gpu_status = done.gpu;
         app.ui.render_ms = done.ms;
     }
     let painter = ui.painter_at(rect);
@@ -301,6 +309,7 @@ fn request_render(app: &mut FigApp, worker: &mut Worker, ppp: f32) {
         skip: vec![],
         solo: ds.focused(),
         fonts: figcraft_text::layout_generation(),
+        gpu: app.canvas.gpu,
     };
     if app.canvas.submitted.as_ref() == Some(&key) {
         return;
@@ -313,6 +322,7 @@ fn request_render(app: &mut FigApp, worker: &mut Worker, ppp: f32) {
         outlined,
         skip: vec![],
         solo: key.solo,
+        gpu: key.gpu,
     };
     worker.submit(job);
     app.canvas.submitted = Some(key);

@@ -287,6 +287,10 @@ pub fn handle(app: &mut FigApp, ctx: &Context, method: &str, p: &Value) -> Resul
             if let Some(t) = p.get("theme").and_then(Value::as_str) {
                 app.session.prefs.theme = t.to_string();
             }
+            #[cfg(feature = "gpu-canvas")]
+            if let Some(on) = p.get("gpuCanvas").and_then(Value::as_bool) {
+                app.canvas.gpu = on;
+            }
             if let Some(h) = p.get("home").and_then(Value::as_bool) {
                 app.ui.home = h;
             }

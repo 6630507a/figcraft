@@ -135,6 +135,10 @@ pub fn show(app: &mut FigApp, ctx: &Context) {
             for c in toggles {
                 app.run(c, json!({}));
             }
+            #[cfg(feature = "gpu-canvas")]
+            if crate::widgets::checkbox(ui, app.canvas.gpu, "GPU canvas (experimental)") {
+                app.canvas.gpu = !app.canvas.gpu;
+            }
             // Where the app registers itself as the opener of invite links (Windows).
             if let Some(on) = app.session.invite_links_on() {
                 if crate::widgets::checkbox(ui, on, "Open invite links in FigCraft") {

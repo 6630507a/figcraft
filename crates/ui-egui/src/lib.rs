@@ -856,6 +856,8 @@ impl FigApp {
                     figcraft_render::Work::Partial { pixels } => json!({"kind": "partial", "pixels": pixels}),
                     figcraft_render::Work::Full => json!({"kind": "full"}),
                 }),
+                "gpu": self.canvas.gpu,
+                "gpuFallback": self.canvas.gpu_status.and_then(Result::err),
             },
             "live": live::inspect(self),
             "tool": self.session.tool_info(),

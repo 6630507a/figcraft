@@ -15,6 +15,8 @@ const TABLE: &[(&str, u8)] = &[
     ("collab", 2),
     ("plugin", 2),
     ("render", 3),
+    // The experimental GPU canvas (vello): above the CPU renderer it falls back to.
+    ("render-gpu", 4),
     ("format", 3),
     ("svg", 4),
     ("pdf", 4),
