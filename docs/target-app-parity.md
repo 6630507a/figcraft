@@ -1,6 +1,6 @@
 # FigCraft parity with Figma
 
-> **Last reviewed:** 2026-10-10 · **Last updated:** 2026-10-11 · **Change:** minor (auto layout behaviour suite and fixes; Display P3: gamut warning and soft-proof (true P3 blocked upstream); several windows; localization layer with a draft Spanish catalog; hosting figcraft-server: wss in the desktop app, server releases, deployment guide; plugin panels and settings; canvas fixes: boolean hit testing on the result, group drags, frame outlines and slices; code connect; stretch and scatter brushes, pen pressure; text on a path and pattern fills; team libraries on the server and swap library; branches: create, update from main, review and merge; animated GIF fills and TIFF images; Open recent, outlines for the selection and mask outlines: menu breadth 100%; extended collections, variables import/export, gradient stop and variant bindings; feature breadth ~79%; ready ~47%; last major: full re-measure against Figma desktop 126.10.7) · **Target:** Figma Design (desktop app 126.10.7, macOS)
+> **Last reviewed:** 2026-10-10 · **Last updated:** 2026-10-11 · **Change:** minor (layers panel keyboard: F2 rename, Shift+F10 context menu, keyboard box selection, 10k-layer QA; per-side stroke weight variables; auto layout behaviour suite and fixes; Display P3: gamut warning and soft-proof (true P3 blocked upstream); several windows; localization layer with a draft Spanish catalog; hosting figcraft-server: wss in the desktop app, server releases, deployment guide; plugin panels and settings; canvas fixes: boolean hit testing on the result, group drags, frame outlines and slices; code connect; stretch and scatter brushes, pen pressure; text on a path and pattern fills; team libraries on the server and swap library; branches: create, update from main, review and merge; animated GIF fills and TIFF images; Open recent, outlines for the selection and mask outlines: menu breadth 100%; extended collections, variables import/export, gradient stop and variant bindings; feature breadth ~79%; ready ~47%; last major: full re-measure against Figma desktop 126.10.7) · **Target:** Figma Design (desktop app 126.10.7, macOS)
 
 The authoritative assessment of how close FigCraft is to Figma Design. [`ROADMAP.md`](../ROADMAP.md)
 summarizes it; [`gaps.md`](gaps.md) is the ranked work list; the measured menu checklist is
@@ -18,10 +18,10 @@ summarizes it; [`gaps.md`](gaps.md) is the ranked work list; the measured menu c
 | Menu/command breadth | **100%** (204 / 204 catalogued menu items have a live command) | **measured** (`cargo xtask parity`, 2026-10-11) |
 | Feature breadth (does each Figma Design feature exist, weighted) | **~79%** (core editor areas 1–16: ~90%) | estimated from the area table below |
 | Ready for real work | **~47%** | estimated (dimension table below: written weights × written per-dimension scores) |
-| Essentials user | **~53%** | estimated ([below](#essentials-user): core features 77.8% × discounts 0.92 × 0.92 × 0.8) |
-| Mainstream practitioner | **~43%** | estimated ([below](#mainstream-practitioner): weekly areas 66.8% × discounts 0.9 × 0.9 × 0.8) |
+| Essentials user | **~53%** | estimated ([below](#essentials-user): core features 77.9% × discounts 0.92 × 0.92 × 0.8) |
+| Mainstream practitioner | **~43%** | estimated ([below](#mainstream-practitioner): weekly areas 67.1% × discounts 0.9 × 0.9 × 0.8) |
 | Remaining to beta | **~195–355 h** one Opus 5.5 agent (~40–80 h wall-clock with 5 parallel agents) | estimated |
-| Remaining to full parity | **~345–666 h** one agent (~92–160 h wall-clock with 5 parallel agents) | estimated |
+| Remaining to full parity | **~344–663 h** one agent (~92–160 h wall-clock with 5 parallel agents) | estimated |
 | Stage | **alpha**: the alpha gate passes ([roadmap](roadmap.md#alpha-gate)); `.fig` import and multiplayer are beta gaps (see [ROADMAP](../ROADMAP.md#stage)) | |
 
 The previous figures (ROADMAP of 2026-10-10, "feature depth ~79%", "full parity 115–195 h") were
@@ -96,10 +96,10 @@ Breadth: does it exist. Ready: depth, correctness and fidelity for real projects
 |---|---|---|---|---|---|---|
 | 1 | Canvas & navigation | 6 | 97% | 72% | Display P3 on screen, QA at extreme zooms (outlines for the selection and mask outlines landed) | 2–5 |
 | 2 | Selection & transform | 8 | 95% | 68% | Handles, measuring and snapping checked tool by tool against Figma; rotated groups and mixed selections | 6–10 |
-| 3 | Layers panel | 5 | 95% | 78% | Keyboard box selection, keyboard rename/context menu, long-list QA | 2–4 |
+| 3 | Layers panel | 5 | 98% | 82% | QA with long real files (keyboard box selection, F2 rename, Shift+F10 context menu and 10k-layer reveal/expand/collapse/arrow timings landed) | 1–2 |
 | 4 | Shapes & vector | 8 | 97% | 68% | Vector QA with real files (live boolean editing, boolean hit testing on the result, arc fields, shape builder on strokes and open paths and one-sided widths landed) | 1–2 |
 | 5 | Paint | 7 | 87% | 66% | Video fills, wide-gamut canvas, embedded image profiles, HEIC images (animated GIF fills and TIFF images landed) | 4–7 |
-| 6 | Strokes | 3 | 90% | 72% | Stroke styles (brush strokes landed, see 20) | 1–3 |
+| 6 | Strokes | 3 | 95% | 75% | Stroke QA with real files (colour styles on strokes, stroke weight and per-side weight variables, brush strokes landed, see 20) | 1–2 |
 | 7 | Effects | 4 | 100% | 72% | Glass and progressive blur tuned side by side | 3–6 |
 | 8 | Frames, groups, sections, masks | 5 | 95% | 75% | Visual QA with real files | 2–4 |
 | 9 | Auto layout & constraints | 9 | 98% | 74% | Behaviour against real Figma files; wrapped-line content alignment (behaviour suite from the documentation, `fr` tracks like CSS, vertical wrap, auto gaps evenly/around and cell alignment landed) ([auto-layout-parity](auto-layout-parity.md)) | 3–6 |
@@ -115,14 +115,14 @@ Breadth: does it exist. Ready: depth, correctness and fidelity for real projects
 | 19 | Team libraries & organization | 2 | 70% | 40% | Libraries kept on `figcraft-server` under their file and enabled by a share link (per-asset versions, background update checks, overrides kept), usage counts per component and file, swapping a library by names. Left: team-wide library lists, accounts and permissions, analytics over time, pushed update notices | 4–8 |
 | 20 | Figma Draw extras | 2 | 80% | 55% | Have: variable width, lasso, shape builder, noise/texture, text on a path, pattern fills, stretch and scatter brushes, pen pressure (Windows pens, browser styluses). Missing: multi-edit, pressure from macOS/Linux tablets | 2–5 |
 | 21 | AI features | 3 | 0% | 0% | First draft, rename layers, image edit/remove background, visual search, Make: needs local models (owner decision) | 30–60 |
-| | **Weighted (÷113)** | 113 | **~79%** | **~57%** | | **187–380** |
-| | Core editor only (1–16, ÷94) | 94 | ~90% | ~67% | | 82–161 |
+| | **Weighted (÷113)** | 113 | **~79%** | **~57%** | | **186–377** |
+| | Core editor only (1–16, ÷94) | 94 | ~90% | ~67% | | 81–158 |
 
 ## By dimension (ready for real work)
 
 | Dimension | Weight | Ready | Hours | Evidence | Doc |
 |---|---|---|---|---|---|
-| Features (depth) | 35 | 57% | 60–115 (areas 1–13, 15, 16, 20) | The table above; core editor ~67% | this file |
+| Features (depth) | 35 | 57% | 59–112 (areas 1–13, 15, 16, 20) | The table above; core editor ~67% | this file |
 | UI/UX fidelity | 15 | 58% | 40–60 | Look & feel compared side by side with UI3 (~65% by the builders); tool-by-tool interaction (cursors, modifiers while dragging, hover states, popovers) not yet compared; accessibility names and keyboard navigation landed | [ui-parity](ui-parity.md) |
 | File formats | 12 | 40% | 30–60 | No `.fig` read or write; REST JSON import, SVG in/out, PNG/JPG/WebP/PDF export solid | [file-format-parity](file-format-parity.md) |
 | Collaboration | 10 | 13% | 55–110 | Local comments, version history and branches with review and merge; the multiplayer core (sync model, server ordering, client reconciliation, convergence tests) landed in #103, and live sessions (preview) co-edit a file hosted by a desktop app or kept on a self-hosted `figcraft-server` with edit and view links, joined from the app or the browser (`docs/collab-protocol.md`) | [collaboration-parity](collaboration-parity.md) |
@@ -133,7 +133,7 @@ Breadth: does it exist. Ready: depth, correctness and fidelity for real projects
 | Platforms | 3 | 75% | 10–20 | macOS, Windows (x64/x86/arm64), Linux, FreeBSD, web all packaged (v0.2.0); Figma also has iOS/Android apps; non-macOS QA thin | [hardware-parity](hardware-parity.md) |
 | Ecosystem/plugins | 3 | 28% | 15–40 | Own WASM plugins with a Rust SDK and two examples (#101), plugin panels and settings (ABI v2); no Figma plugin compatibility, no widgets, no distribution or community files; the CLI, control channel and MCP server are ahead of Figma for agents | [gaps](gaps.md) |
 | AI features | 2 | 0% | 30–60 | None | [gaps](gaps.md) |
-| **Ready for real work** | 100 | **~47%** | **~345–666** | | |
+| **Ready for real work** | 100 | **~47%** | **~344–663** | | |
 
 Dimension hours add up to the full-parity total without double counting: the feature-area rows
 for import/export (14), multiplayer and team libraries (17, 19), plugins (18) and AI (21) are
@@ -155,12 +155,12 @@ graphic or a simple mockup. Same method, with the core features a casual user to
 | Rectangle, ellipse, line, arrow, corner radius | 8 | 80% | |
 | Text: type, font, size, weight, colour, alignment | 12 | 70% | no spell check |
 | Colour picker, fills and strokes; place and crop images | 10 | 72% | no HEIC images |
-| Layers panel: rename, hide, lock, reorder | 7 | 80% | |
+| Layers panel: rename, hide, lock, reorder | 7 | 82% | F2 rename, keyboard context menu |
 | Basic auto layout (add, gap, padding) | 6 | 70% | |
 | Undo / redo | 5 | 90% | unlimited, one step per gesture |
 | Export PNG, JPG, SVG, PDF | 6 | 85% | |
 | Copy and paste, incl. images from other apps | 3 | 75% | |
-| **Weighted** | 100 | **77.8%** | |
+| **Weighted** | 100 | **77.9%** | |
 
 Left out: components and variables beyond using one, prototyping, Dev Mode, advanced vector and
 type, and everything the mainstream number leaves out.
@@ -173,7 +173,7 @@ type, and everything the mainstream number leaves out.
 | Discoverability and UI clarity | ×0.92 | the UI3 layout Figma users know, Actions palette, keyboard shortcuts panel; no onboarding, templates or Community files to start from |
 | Opening files people send them | ×0.80 | what people send a Figma user is a Figma link or a `.fig`; neither opens. Images and SVG do |
 
-77.8% × 0.92 × 0.92 × 0.80 = **~53%** (estimated). User evidence: none yet (see above).
+77.9% × 0.92 × 0.92 × 0.80 = **~53%** (estimated). User evidence: none yet (see above).
 
 ## Mainstream practitioner
 
@@ -187,7 +187,7 @@ libraries (19, cloud/team admin), Figma Draw extras (20, not weekly for a produc
 localization beyond English, specialist hardware. Real-time multiplayer (17) is cloud collaboration
 and is left out as an area, but its effect on working with Figma users is counted in discount 3.
 
-**2. Average depth** ("Ready" column, weighted): **66.8%**.
+**2. Average depth** ("Ready" column, weighted): **67.1%**.
 
 **3. Discounts for what still stops real work:**
 
@@ -197,7 +197,7 @@ and is left out as an area, but its effect on working with Figma users is counte
 | Stability on real machines | ×0.90 | Never-crash lints, command guard with rollback, recovery copies and 963 tests, but no field record at all: the repository is private, v0.2.0 has had no outside users or issue reports, CI tests run on Linux only and hands-on QA is on macOS. Harsher than VectorCraft's ×0.92 because there is no outside evidence either way |
 | File exchange with Figma users | ×0.80 | A Figma designer's work lives in shared Figma files. FigCraft can't open `.fig` or write anything Figma opens as a document; incoming work can come through the REST API JSON (one way, needs an access token), outgoing only as SVG, PDF, PNG or code. Teammates, reviewers and developers would all need FigCraft ([file-format-parity](file-format-parity.md), [collaboration-parity](collaboration-parity.md)) |
 
-66.8% × 0.90 × 0.90 × 0.80 = **~43%** (estimated).
+67.1% × 0.90 × 0.90 × 0.80 = **~43%** (estimated).
 
 **4. User evidence (2026-10-10):** 0 issues, 0 praise or "switched from Figma" reports, 0 comments
 from anyone but the maintainers (`gh issue list`, `gh api .../issues/comments`; the repository is
@@ -513,8 +513,9 @@ Hours in this narrative are the builders' estimates; the tables above supersede 
    coming only until it arrives (`ui.inspect` `framesDrawn` and `repaintCauses` show what asked for
    frames; headless tests hold it). *Left:* a real-world file corpus, Windows/Linux/browser
    QA, runs with real screen readers (NVDA, Narrator, VoiceOver, Orca), the AccessKit tree in the
-   browser (eframe's web backend doesn't send it yet), keyboard box selection, keyboard rename and
-   context menus in the layers panel. 28–46 h.
+   browser (eframe's web backend doesn't send it yet). Landed since: F2 rename from the keyboard,
+   Shift+F10 context menus at the focused layer row or the canvas selection, keyboard box selection
+   (F8). 27–44 h.
 
 ## Inventory: what exists today
 
@@ -580,6 +581,7 @@ Carried over from the ROADMAP's "Shipped so far" (2026-10-10). The test count th
 
 | Date | Change | Summary |
 |---|---|---|
+| 2026-10-11 | minor | Layers panel keyboard and stroke variables: F2 renames the selected layer (also from a layer row with the keyboard, which gets it back; Escape there cancels), Shift+F10 (`view.contextMenu`) opens the context menu at the focused row or below the canvas selection and the menu takes the keyboard, F8 (`select.area`) draws a selection box for keyboard-only users (arrows move it, Shift+arrows size it, Enter selects like a marquee; agents pass a box), long lists checked at 10k layers (revealing a layer, expanding or collapsing everything and arrow keys take at most 1.3 ms a frame in the release UI bench; the revealed row takes the keyboard); colour styles on strokes were already complete, and each side's stroke weight now binds to a number variable (`strokeTopWeight`…, bindable fields in the Design panel and REST import). Layers panel 95%/78% → 98%/82%, 2–4 h → 1–2 h; Strokes 90%/72% → 95%/75%, 1–3 h → 1–2 h; feature breadth (~79%), ready for real work (~47%), essentials (~53%) and mainstream (~43%) unchanged at this rounding; full parity ~345–666 h → ~344–663 h |
 | 2026-10-11 | minor | Auto layout behaviour suite written from the public documentation (64 layout cases, 8 command tests) and its fixes: a frame is never smaller than its padding, only the frame's inside stroke counts when strokes are included (and new auto layout includes them), auto gaps stop at 0, grid `fr` tracks behave like the CSS `fr` unit (a track never gets less than its content), canvas stacking is drawn, exported and hit (it was stored only). Added: auto gaps evenly and around, vertical wrap, grid cell alignment, strokes and canvas stacking controls. Auto layout 95%/68% → 98%/74%, 6–12 h → 3–6 h; percentages unchanged at this rounding; full parity ~348–672 h → ~345–666 h |
 | 2026-10-11 | minor | Display P3 honest minimum (gap 18): the colour picker of a Display P3 file warns when a colour is outside sRGB (Outside sRGB, with what the canvas and exports do), and View ▸ Soft-proof sRGB (`view.proofSrgb`) stripes the canvas pixels sRGB can't show. Why the canvas still shows sRGB: wgpu 30 can present Display P3 or extended-range sRGB surfaces (Metal, DX12, Vulkan, WebGPU canvases), but eframe/egui-wgpu 0.36 configure an 8-bit sRGB surface with no option for the format or colour space, and egui's renderer writes sRGB-encoded UI colours; showing P3 needs those two upstream (or a patched egui-wgpu). Hardware 13–27 h → 12–26 h; gap 18 6–12 h → 5–11 h; percentages, feature breadth (~79%) and ready for real work (~47%) unchanged at this rounding; full parity ~363–697 h → ~362–696 h |
 | 2026-10-11 | minor | Several windows (gap 18): File ▸ New window, a tab's Open in new window or a tab dragged off the tab strip opens files in another window with its own tabs, panels and canvas, sharing the files, preferences, libraries and clipboard; each window draws only when it needs to (idle: ~0% CPU), closing one closes its files after asking about unsaved changes (the main window too, which takes over another window instead of quitting; the last window quits), and the control channel and MCP open, list, focus and capture windows (`window.new`, `window.list`, `window.focus`, `window` on any request); the screen-reader tree covers the main window only (eframe 0.36), so with a screen reader running files stay tabs; one window in the browser. Hardware 55% → 60%, 13–27 h → 10–21 h; gap 18 6–12 h → 4–8 h (P3 on screen left); feature breadth (~79%) and ready for real work (~47%) unchanged at this rounding; full parity ~363–697 h → ~360–691 h |

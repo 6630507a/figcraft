@@ -1301,6 +1301,8 @@ mod section_contents_tests;
 #[cfg(test)]
 mod section_tests;
 #[cfg(test)]
+mod select_area_tests;
+#[cfg(test)]
 mod selection_depth_tests;
 #[cfg(test)]
 mod shapebuilder_strokes_tests;
