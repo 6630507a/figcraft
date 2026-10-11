@@ -1309,6 +1309,8 @@ mod shapebuilder_tests;
 #[cfg(test)]
 mod slot_tests;
 #[cfg(test)]
+mod stroke_style_tests;
+#[cfg(test)]
 mod style_tests;
 #[cfg(test)]
 mod svg_import_tests;
