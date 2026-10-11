@@ -155,10 +155,11 @@ fn vertical_trim_through_node_set() {
     // Descenders hang below the trimmed box: exports reach past it to keep them.
     let eb = figcraft_render::export_bounds(s.doc().unwrap(), t).unwrap();
     assert!(eb.y1 > n.height + 10.0, "{eb:?}");
-    // The PNG's ink starts at the box's top (cap height at y = 0); SVG and PDF use the same layout.
+    // The PNG's ink starts at the box's top (cap height at y = 0; ascenders like "l" may poke a few
+    // px above it, by how much depends on the font); SVG and PDF use the same layout.
     let pix = figcraft_render::render_node(s.doc().unwrap(), t, 1.0).unwrap();
     let first_ink = (0..pix.height()).find(|y| (0..pix.width()).any(|x| pix.pixel(x, *y).is_some_and(|p| p.alpha() > 64)));
-    assert!(first_ink.is_some_and(|y| (f64::from(y) + eb.y0).abs() <= 2.0), "{first_ink:?} {eb:?}");
+    assert!(first_ink.is_some_and(|y| (-8.0..=2.0).contains(&(f64::from(y) + eb.y0))), "{first_ink:?} {eb:?}");
     let svg = figcraft_svg::export_svg(s.doc().unwrap(), &[t], &figcraft_svg::SvgOptions::default()).unwrap();
     assert!(!svg.contains("NaN"));
     assert!(figcraft_pdf::export_nodes_pdf(s.doc().unwrap(), &[t]).is_ok());
