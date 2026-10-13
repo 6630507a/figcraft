@@ -42,6 +42,7 @@ pub mod plugin_directory;
 pub mod plugins;
 pub mod proto_run;
 pub mod rename;
+pub mod restore;
 pub mod rotation_origin;
 pub mod shape_handles;
 pub mod shapebuilder;
@@ -591,6 +592,10 @@ pub struct Prefs {
     /// The Getting started tips on the home screen were closed (Help ▸ Getting started shows them
     /// again).
     pub getting_started_dismissed: bool,
+    /// Reopen windows and tabs from last time when the app starts (`pref.restoreSession`).
+    pub restore_session: bool,
+    /// The windows and tabs open now, kept as they change ([`restore`]).
+    pub session: restore::SavedSession,
 }
 
 impl Default for Prefs {
@@ -616,6 +621,8 @@ impl Default for Prefs {
             recent_files: Vec::new(),
             online_files: Vec::new(),
             getting_started_dismissed: false,
+            restore_session: true,
+            session: restore::SavedSession::default(),
         }
     }
 }
@@ -673,6 +680,8 @@ pub struct Session {
     pub live: live::Lives,
     /// Commands the UI runs without waiting on a server ([`Session::start_background`]).
     pub background: background::Background,
+    /// Session restore: the last run's session while it is on offer, online files on their way.
+    pub restore: restore::State,
 }
 
 impl Default for Session {
@@ -707,6 +716,7 @@ impl Session {
             plugins: plugins::Runtime::default(),
             live: live::Lives::default(),
             background: background::Background::default(),
+            restore: restore::State::default(),
         }
     }
 
@@ -1492,6 +1502,8 @@ mod proto_responsive_tests;
 mod proto_run_tests;
 #[cfg(test)]
 mod proto_tail_tests;
+#[cfg(test)]
+mod restore_tests;
 #[cfg(test)]
 mod retained_walk_tests;
 #[cfg(test)]

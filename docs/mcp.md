@@ -922,6 +922,18 @@ opens one (a new file, the file at `path`, or open file `index` moved out of its
 focus a window before working on its files, and pass its id to `screenshot {window}` to see it.
 Headless (one session, no windows) and in the browser the two commands do nothing.
 
+**Session restore.** The desktop app opens the windows and tabs it was left with at the next
+start. `run_command` with `session.restore {session?}` does it on demand: without `session` it
+restores the last run's session when this run started without it (else the one kept with the
+preferences); with one, `{windows: [{tabs: [{path} | {server, file}, page?, view?: [cx, cy,
+zoom]], front?, rect?, maximized?, fullscreen?}]}`, it opens those tabs in that order with their
+page and view. It returns `{windows, opened, joining (your online files on their way from their
+servers), missing (the names of files that are gone)}`; a file that is open already is used as it
+is. Headless there are no windows and no preferences file, so pass `session`: the tabs of every
+window open in the one session, in order, and the first window's front tab is the active document.
+`pref.restoreSession {on?}` turns reopening at start on or off (on by default). Attached,
+`inspect_ui` reports the kept session as `session.saved`.
+
 ### Live sessions
 
 People (and agents) edit one file together and see each other's cursors, selections and
