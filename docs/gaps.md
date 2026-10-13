@@ -1,6 +1,6 @@
 # Where FigCraft falls short of Figma
 
-> **Last reviewed:** 2026-10-10 · **Last updated:** 2026-10-13 · **Change:** minor (branch history entries; import lines inside generated layer trees; session restore; `.fig` export: instance sizes, variables with modes, shared styles, variable-width strokes; sharing with a join code; text box sizes measured against documents re-saved by other software; live sessions per document; .fig export checked by opening written files in other software; experimental .fig export; keyboard shortcut parity suite and bindings; Simplified Chinese draft catalog; Latin American Spanish overlay; prototyping tail: gamepad triggers, widgets in prototypes, mode lookups; plugin directory on figcraft-server; Japanese and Korean draft catalogs and CJK UI fonts; plugin widgets and the plugin panel tail; French, German and Brazilian Portuguese draft catalogs; cursor chat and spotlight in live sessions; layers and assets panels behaviour suite and fixes; vector multi-edit and edit tail; dev resources links; extended collections tail; branch version history and finer list merges; comments and version history behaviour suite and fixes; canvas navigation, guides and grids behaviour suite and fixes; `.fig` import: editable vector networks, more layer kinds, variable prototype actions; `.fig` import, best effort: gap 1 down to its tail; Windows QA pass: everyday workflows on Windows 11, eight fixes incl. unsaved work kept after a crash or a forced quit; Display P3: gamut warning and soft-proof (true P3 blocked upstream); several windows; localization layer with a draft Spanish catalog; hosting figcraft-server: wss in the desktop app, server releases, deployment guide; plugin panels and settings; canvas fixes: boolean hit testing on the result, group drags, frame outlines and slices; code connect; stretch and scatter brushes, pen pressure; text on a path and pattern fills; team libraries on the server and swap library; branches: create, update from main, review and merge; animated GIF fills and TIFF images; Open recent, outlines for the selection and mask outlines: menu breadth 100%; extended collections, variables import/export, gradient stop and variant bindings: gap 14 down to its tail) · **Target:** Figma Design (desktop app 126.10.7)
+> **Last reviewed:** 2026-10-10 · **Last updated:** 2026-10-13 · **Change:** minor (plugin API 4: widget text input, property menus, hover styles, timers and richer drawing, panel sliders and pictures; branch history entries; import lines inside generated layer trees; session restore; `.fig` export: instance sizes, variables with modes, shared styles, variable-width strokes; sharing with a join code; text box sizes measured against documents re-saved by other software; live sessions per document; .fig export checked by opening written files in other software; experimental .fig export; keyboard shortcut parity suite and bindings; Simplified Chinese draft catalog; Latin American Spanish overlay; prototyping tail: gamepad triggers, widgets in prototypes, mode lookups; plugin directory on figcraft-server; Japanese and Korean draft catalogs and CJK UI fonts; plugin widgets and the plugin panel tail; French, German and Brazilian Portuguese draft catalogs; cursor chat and spotlight in live sessions; layers and assets panels behaviour suite and fixes; vector multi-edit and edit tail; dev resources links; extended collections tail; branch version history and finer list merges; comments and version history behaviour suite and fixes; canvas navigation, guides and grids behaviour suite and fixes; `.fig` import: editable vector networks, more layer kinds, variable prototype actions; `.fig` import, best effort: gap 1 down to its tail; Windows QA pass: everyday workflows on Windows 11, eight fixes incl. unsaved work kept after a crash or a forced quit; Display P3: gamut warning and soft-proof (true P3 blocked upstream); several windows; localization layer with a draft Spanish catalog; hosting figcraft-server: wss in the desktop app, server releases, deployment guide; plugin panels and settings; canvas fixes: boolean hit testing on the result, group drags, frame outlines and slices; code connect; stretch and scatter brushes, pen pressure; text on a path and pattern fills; team libraries on the server and swap library; branches: create, update from main, review and merge; animated GIF fills and TIFF images; Open recent, outlines for the selection and mask outlines: menu breadth 100%; extended collections, variables import/export, gradient stop and variant bindings: gap 14 down to its tail) · **Target:** Figma Design (desktop app 126.10.7)
 
 Every known shortfall against Figma, one entry each, ranked by how much it stops a Figma user from
 doing real work in FigCraft. Agents: pick work from the top unless the owner says otherwise. The
@@ -19,7 +19,7 @@ No alpha blockers: the alpha gate in [`roadmap.md`](roadmap.md#alpha-gate) passe
 | 3 | Nothing checked against real Figma files | Fidelity | 15–30 | [target-app-parity](target-app-parity.md) |
 | 4 | Interaction fidelity not compared tool by tool | UI/UX | 40–60 | [ui-parity](ui-parity.md) |
 | 5 | Localization: English plus unreviewed Spanish (and Latin American Spanish), French, German, Brazilian Portuguese, Japanese, Korean and Simplified Chinese drafts | Localization | 29–51 | [localization-parity](localization-parity.md) |
-| 6 | Plugins: widgets take clicks only, a self-hosted directory but no public catalogue; Figma's plugins don't run | Ecosystem | 8–26 | [target-app-parity](target-app-parity.md) |
+| 6 | Plugins: a self-hosted directory but no public catalogue; plugins written for other apps don't run | Ecosystem | 5–20 | [target-app-parity](target-app-parity.md) |
 | 7 | CPU canvas where Figma uses the GPU | Hardware/performance | 30–60 | [hardware-parity](hardware-parity.md) |
 | 8 | Platform QA: Linux and the browser left (Windows pass done 2026-10-11) | Stability/platforms | 10–20 | [hardware-parity](hardware-parity.md) |
 | 9 | Figma Draw: pen pressure on macOS/Linux tablets (multi-edit, brushes, pressure, text on a path and pattern fills landed) | Feature | 1–3 | [target-app-parity](target-app-parity.md) |
@@ -163,7 +163,7 @@ No alpha blockers: the alpha gate in [`roadmap.md`](roadmap.md#alpha-gate) passe
   [`localization-parity.md`](localization-parity.md); how to add one in
   [`translating.md`](translating.md).
 
-### 6. Plugins: widgets take clicks only, a self-hosted directory but no public catalogue; Figma's plugins don't run
+### 6. Plugins: a self-hosted directory but no public catalogue; plugins written for other apps don't run
 - **Landed (#101):** sandboxed WebAssembly plugins (wasmi, metered, memory cap, no WASI, also in
   the browser) acting through the command registry, one undo step per run, manifest permissions,
   Plugins menu, Run last plugin, Manage plugins, `plugin.*` commands, a Rust SDK and two examples
@@ -180,16 +180,29 @@ No alpha blockers: the alpha gate in [`roadmap.md`](roadmap.md#alpha-gate) passe
   key and checked in full (`figcraft-cli plugin publish`), browsed, installed after a permissions
   confirmation and updated from Plugins ▸ Manage plugins ▸ Browse, downloads checked against their
   SHA-256, `plugin.directory.*` for scripts and MCP, moderation with `figcraft-server plugins`.
-- **Missing:** a public catalogue and Community files, publisher accounts and signatures, ratings
-  and install counts, background update checks, the directory in the browser build; widgets take only clicks (no
-  text input, property menus, hover or timers) and draw only frames, text, shapes and images;
-  no images or sliders in panels. Figma's own plugins are JavaScript against Figma's plugin API and
-  don't run.
+  Plugin API 4 (2026-10-13; older plugins run unchanged): a widget's texts are edited in place
+  with the text editor and committed to its plugin, a selected widget shows the property menu its
+  plugin declares (a bar by the widget and the same items in the Design panel: buttons, toggles,
+  dropdowns, colours, links), parts have hover styles and tooltips the app shows without calling
+  the plugin, and a widget can ask to be called back after 100 ms to an hour (one timer each; in a
+  live session it runs for whoever started it last); widgets draw lines, vectors from path data,
+  gradients, shadows, per-corner radii, per-side padding, children that fill, text weights,
+  alignment and truncation and image fit modes; panels have sliders, pictures, progress bars,
+  dividers, folding sections, disabled controls and validation messages; `widget.setText` /
+  `widget.menu` / `widget.menuAction` / `widget.fireTimer` for agents; all of it works on a
+  presented prototype's copy; the SDK has builders for it, and the Counter (menu), Focus list
+  (typed text, a timer, auto layout) and Dot grid (sliders and a picture) examples use it.
+- **Missing:** a public catalogue and community files, publisher accounts and signatures, ratings
+  and install counts, background update checks, the directory in the browser build; widgets can't
+  open a panel, use components, styles or variables in their layers, take drags or name image
+  files from the plugin's folder, and their timers stop while the file is closed or behind
+  another tab; panels have no free layout or tabs. Plugins written for other apps are JavaScript
+  against another plugin API and don't run.
 - **Impact:** teams that depend on specific Figma plugins (icons, content, accessibility checks)
   can't bring them. FigCraft's CLI, control channel and MCP server cover agent automation better
   than Figma does.
-- **Estimate:** 8–26 h for the missing pieces of FigCraft's own API. Running Figma's plugins
-  needs a JS engine and an API shim: **owner decision needed**.
+- **Estimate:** 5–20 h for the missing pieces of FigCraft's own API. Running plugins written for
+  other apps needs a JS engine and an API shim: **owner decision needed**.
 
 ### 7. CPU canvas where Figma uses the GPU
 - **Missing:** GPU rendering of the canvas. FigCraft renders with tiny-skia on the CPU (banded,
@@ -402,6 +415,7 @@ No alpha blockers: the alpha gate in [`roadmap.md`](roadmap.md#alpha-gate) passe
 
 | Date | Change | Summary |
 |---|---|---|
+| 2026-10-13 | minor | Gap 6: plugin API 4 landed (widgets take text typed in place, a property menu, hover styles, tooltips and timers, and draw lines, vectors, gradients, shadows and text styles; panels have sliders, pictures, progress bars, dividers, sections, disabled controls and validation messages; commands for every interaction; three examples); 8–26 h → 5–20 h, retitled |
 | 2026-10-13 | minor | Gap 17: a branch's version history gets entries for its creation and each update from main; left: branches in live sessions and lists other than fills, strokes and effects merging whole; estimate and ranking unchanged |
 | 2026-10-13 | minor | Gap 16: import lines for connected instances inside generated layer trees landed (deduplicated and ordered per language); what is left is publishing mappings from the code repository with a CLI; estimate and ranking unchanged |
 | 2026-10-13 | minor | Gap 18: window places are restored at the next start (session restore: windows, tabs, pages, views and panels come back as they were left); what is left is wide-gamut colour on screen and the screen-reader tree in other windows, both blocked upstream; estimate and ranking unchanged |
