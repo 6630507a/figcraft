@@ -898,7 +898,8 @@ branches). Driven with `run_command`:
 - `branch.archive {id?}` sets a branch aside without merging (it stays in the file and can still be
   opened, but not merged).
 
-Each branch keeps its own version history: on a branch tab, `file.saveVersion`, `version.autosave`
+Each branch keeps its own version history, which starts with `Branch created` and gets `Updated
+from main` after each `branch.updateFromMain`: on a branch tab, `file.saveVersion`, `version.autosave`
 and the `version.*` commands (list, preview, restore, rename, delete, duplicate) act on the
 branch's versions, which are saved in the file with the branch and stay with it when it is merged
 or archived. Branches aren't available in a live session.

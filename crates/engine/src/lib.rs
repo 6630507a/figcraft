@@ -1357,6 +1357,8 @@ mod binding_lists_tests;
 #[cfg(test)]
 mod booleans_tests;
 #[cfg(test)]
+mod branch_history_tests;
+#[cfg(test)]
 mod branch_tests;
 #[cfg(test)]
 mod branch_versions_tests;
