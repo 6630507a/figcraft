@@ -1367,6 +1367,8 @@ mod canvas_fixes_tests;
 #[cfg(test)]
 mod code_connect_tests;
 #[cfg(test)]
+mod code_imports_tests;
+#[cfg(test)]
 mod collab_ids_tests;
 #[cfg(test)]
 mod collab_live_tests;

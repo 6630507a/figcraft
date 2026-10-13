@@ -1192,7 +1192,8 @@ permissions: without it nothing is downloaded); `plugin.directory.publish {path 
   strings, any other `{…}` stays as written (`unknown` lists placeholder names that aren't
   properties). Then `inspect.code` on an instance or the component returns the import line and the
   snippet instead of generated code (`connected: true`), connected instances inside a generated
-  layer tree are their snippet, and `inspect.componentCode` returns `connected: {importPath, name,
+  layer tree are their snippet with their import lines at the top of the tree's code (one per
+  import path, in order, each name once), and `inspect.componentCode` returns `connected: {importPath, name,
   template, import, code}` with the snippet as `usage`. Example: template `<Button
   variant="primary" icon="{Has icon ? "cart" : "none"}">{label}</Button>` with import path
   `@acme/ui` gives `import { Button } from "@acme/ui";` then `<Button variant="primary" icon="none">{"Buy
