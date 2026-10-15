@@ -18,7 +18,7 @@ No alpha blockers: the alpha gate in [`roadmap.md`](roadmap.md#alpha-gate) passe
 | 2 | Multiplayer and sharing are a preview, without accounts (**beta blocker**) | Feature | 42–84 | [collaboration-parity](collaboration-parity.md) |
 | 3 | Nothing checked against real Figma files | Fidelity | 15–30 | [target-app-parity](target-app-parity.md) |
 | 4 | Interaction fidelity not compared tool by tool | UI/UX | 40–60 | [ui-parity](ui-parity.md) |
-| 5 | Localization: English plus unreviewed Spanish (and Latin American Spanish), French, German, Brazilian Portuguese, Japanese, Korean and Simplified Chinese drafts | Localization | 29–51 | [localization-parity](localization-parity.md) |
+| 5 | Localization: English, reviewed Russian, plus unreviewed Spanish (and Latin American Spanish), French, German, Brazilian Portuguese, Japanese, Korean and Simplified Chinese drafts | Localization | 29–51 | [localization-parity](localization-parity.md) |
 | 6 | Plugins: widgets take clicks only, a self-hosted directory but no public catalogue; Figma's plugins don't run | Ecosystem | 8–26 | [target-app-parity](target-app-parity.md) |
 | 7 | CPU canvas where Figma uses the GPU | Hardware/performance | 30–60 | [hardware-parity](hardware-parity.md) |
 | 8 | Platform QA: Linux and the browser left (Windows pass done 2026-10-11) | Stability/platforms | 10–20 | [hardware-parity](hardware-parity.md) |
@@ -142,7 +142,7 @@ No alpha blockers: the alpha gate in [`roadmap.md`](roadmap.md#alpha-gate) passe
 - **Impact:** Figma users notice the feel within minutes; it decides whether they stay.
 - **Estimate:** 40–60 h. Detail in [`ui-parity.md`](ui-parity.md).
 
-### 5. Localization: English plus unreviewed drafts
+### 5. Localization: English, reviewed Russian, plus unreviewed drafts
 - **Missing:** native reviews of the Spanish, French, German, Brazilian Portuguese, Japanese,
   Korean and Simplified Chinese drafts and the Latin American Spanish overlay, the 25 newest strings
   in five drafts, Hindi, Arabic, Indonesian and Vietnamese, localized engine messages and number
@@ -152,8 +152,9 @@ No alpha blockers: the alpha gate in [`roadmap.md`](roadmap.md#alpha-gate) passe
   Preferences ▸ Language, `pref.language`; `en.toml` is complete, and `es.toml`, `fr.toml`,
   `de.toml`, `pt-BR.toml`, `ja.toml`, `ko.toml` and `zh-Hans.toml` (2026-10-12) are machine drafts
   (all but `zh-Hans.toml` lack the 25 newest strings), with `es-419.toml` a Latin American overlay
-  listing only what differs from Spanish (only Spanish is held to completeness by the check; the
-  others show English for strings added later).
+  listing only what differs from Spanish (Spanish and Russian are held to completeness by the check; the
+  others show English for strings added later). Russian adds all 2,165 current entries,
+  reviewed and approved by VanTan, with one/few/many integer plurals.
   CJK UI text uses an installed CJK face the desktop app loads when something on screen needs it
   (`crates/ui-egui/src/cjk.rs`). Engine error messages and Dev Mode values stay English.
 - **Impact:** non-English designers get machine drafts nobody has reviewed yet, and English
@@ -193,7 +194,9 @@ No alpha blockers: the alpha gate in [`roadmap.md`](roadmap.md#alpha-gate) passe
 
 ### 7. CPU canvas where Figma uses the GPU
 - **Missing:** GPU rendering of the canvas. FigCraft renders with tiny-skia on the CPU (banded,
-  parallel, retained) and shows the image through wgpu.
+  parallel, retained) and shows the image through wgpu. A new zoom can't reuse the retained
+  image; when renders from scratch take a frame or more, the whole view is previewed with a
+  sixteenth of the pixels first, then refined.
 - **Evidence (measured, `cargo xtask bench`):** a 50k-layer page ~8 ms zoomed out with levels of
   detail, single-layer edits at 10k layers ~0.2 ms; full 1440×900 renders 7–15 ms at 10k layers.
   Heavy effects (glass, background blur, noise) and 4K/5K canvases at 2x are where CPU time grows.
@@ -406,6 +409,7 @@ No alpha blockers: the alpha gate in [`roadmap.md`](roadmap.md#alpha-gate) passe
 | Date | Change | Summary |
 |---|---|---|
 | 2026-10-15 | minor | Gap 16: import lines inside generated layer trees, compare with any saved version, an inspect-only Dev Mode canvas (menus and shortcuts refuse design edits), Changed in the ready list, statuses only on sections and top-level frames, read-only plugins' panels from the Inspect tab. Left: measurements kept on the canvas, a read-only layers panel, publishing mappings with a CLI; 0–1 h → 2–4 h |
+| 2026-10-14 | minor | Russian catalog (M9), reviewed and approved by VanTan: all 2,165 current entries, Русский in Preferences and regional ru tags. Russian integer plurals use one/few/many; contributor display name VanTan added. Existing estimates unchanged. |
 | 2026-10-13 | minor | Gap 1: the experimental `.fig` export writes instance sizes (resized, filling an auto layout, scaled), variables with modes and bindings, shared styles and variable-width strokes, and the import reads them back. Checked by opening written files in other software: resized and scaled instances keep their size and lay their layers out for it, variables with their modes and colour bindings resolve there (a frame set to another mode shows that mode's colours, also inside instances), colour, text, effect and grid styles are listed, and variable-width strokes that are the same on both sides of the path draw with their width; number, string and boolean bindings and bindings on effects, layout guides and gradient stops come across as the values they give but did not show as bound there (their entries now also name the layer field they set, not yet checked there), and strokes wider on one side of the path are written as filled outlines, no longer editable strokes there (the stroke itself is kept as plugin data and our own import puts it back; not yet checked there). Hours and the ranking unchanged |
 | 2026-10-12 | minor | Gap 2: your online files landed (the app records the files it put on a server with their owner tokens, Home ▸ Online lists them and opens them again as their owner, with sharing, rename, removal and forget from the list; one request per server tells which are still there; tabs mark files in a live session). What is left is unchanged: accounts, teams and per-person permissions, shared comments and versions. Hours unchanged |
 | 2026-10-12 | minor | Gap 2: sharing with a join code (Share ▸ Online or Local network, one Start sharing button, a short code to give others, one join field for a code or a link; the server names links with codes and limits wrong ones) added to the landed list; usability, so the estimate and ranking are unchanged |
