@@ -1137,8 +1137,7 @@ impl Session {
         }
         // Handles first: a selected ellipse's arc handles (drawn over the box), then the box's.
         let edits = !self.tool.dev_mode;
-        if edits
-            && self.arc_handles_shown()
+        if self.arc_handles_shown()
             && let Some((id, handle)) = crate::arc_handles::hit(&doc, &sel, ev.p(), ev.zoom)
             && let Some(arc) = crate::arc_handles::arc_of(&doc, id)
         {
@@ -1148,8 +1147,7 @@ impl Session {
                 crate::arc_handles::handle_at(&doc, id, handle, arc, ev.zoom).map(|at| ArcHint { handle, label: arc.label(handle), at });
             return Ok(());
         }
-        if edits
-            && self.arc_handles_shown()
+        if self.arc_handles_shown()
             && !on_corner_square(&doc, &sel, ev.p(), ev.zoom)
             && let Some((id, handle)) = crate::shape_handles::hit(&doc, &sel, ev.p(), ev.zoom)
         {
@@ -2341,6 +2339,7 @@ impl Session {
     fn arc_handles_shown(&self) -> bool {
         let arc_drag = matches!(self.tool.gesture, Gesture::Arc { .. } | Gesture::Shape { .. });
         self.tool.tool == ToolId::Move
+            && !self.tool.dev_mode
             && (arc_drag || !self.tool.busy())
             && self.ds().is_ok_and(|ds| ds.vector_edit.is_none() && ds.text_edit.is_none())
     }
