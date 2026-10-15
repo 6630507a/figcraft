@@ -38,3 +38,29 @@ fn compare_view_compares_with_a_saved_version() {
     assert_eq!(u.app.inspect()["devCompare"]["version"], json!(null));
     assert!(u.app.ui.dev.compare.is_some());
 }
+
+#[test]
+fn dev_mode_keys_refuse_design_edits_and_say_why() {
+    let mut s = Session::new();
+    let f = id(&s.execute("frame.create", &json!({"x": 0, "y": 0, "width": 300, "height": 400, "name": "Login"})).unwrap());
+    let r = id(&s.execute("shape.rectangle", &json!({"x": 20, "y": 30, "width": 120, "height": 40, "parent": f})).unwrap());
+    s.execute("select.set", &json!({"ids": [r]})).unwrap();
+    let mut u = Ui::new(s);
+    u.app.ui.right_tab = crate::RightTab::Inspect;
+    u.frame(vec![]);
+    let at = egui::pos2(700.0, 450.0);
+    let x = |u: &Ui| u.app.session.doc().unwrap().node(r).map(|n| n.transform.as_coeffs()[4]);
+    for key in [egui::Key::Delete, egui::Key::ArrowRight, egui::Key::Num5, egui::Key::R] {
+        u.key(at, key);
+    }
+    assert!(u.app.session.doc().unwrap().contains(r), "not deleted");
+    assert_eq!(x(&u), Some(20.0), "not nudged");
+    assert_eq!(u.app.session.doc().unwrap().node(r).map(|n| n.opacity), Some(1.0), "opacity kept");
+    assert_eq!(u.app.session.tool.tool, figcraft_engine::tools::ToolId::Move, "no drawing tool");
+    assert!(u.app.ui.toast.as_ref().is_some_and(|(m, _)| m.contains("Shift+D")));
+    // In the design the same keys edit.
+    u.app.ui.right_tab = crate::RightTab::Design;
+    u.frame(vec![]);
+    u.key(at, egui::Key::ArrowRight);
+    assert_eq!(x(&u), Some(21.0));
+}
