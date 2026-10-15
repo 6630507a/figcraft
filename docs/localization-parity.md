@@ -32,7 +32,7 @@ supported by both apps (CJK, Arabic and Devanagari shaping, IME); Figma has no v
   channel stay English. Accessibility names come from the same strings.
 - **Language preference:** Preferences ▸ Language (System, English, Čeština, Deutsch, Español,
   Español (Latinoamérica), Français, Bahasa Indonesia, 日本語, 한국어, Português (Brasil), Русский,
-  Türkçe, 简体中文), applied at once without a
+  Svenska, Türkçe, 简体中文), applied at once without a
   restart; System takes the first of the OS's preferred languages that has a catalog (on Windows
   only the first preferred language counts, since that list also holds the languages added for a
   keyboard; macOS AppleLanguages, `LANGUAGE` then the locale variables on Linux and BSD; a regional
@@ -110,6 +110,9 @@ Other languages (Figma ships none beyond the eight above):
 | Russian | ru | 2,165 / 2,177 (99%) | yes, but the newest strings | Cyrillic in the UI fonts; one/few/many plurals | yes (VanTan) | partial (reviewed) | 0–1 (the newest strings) |
 | Turkish | tr | 2,165 / 2,177 (99%) | yes, but the newest strings | Latin (dotted and dotless i) | yes | partial (reviewed) | 0–1 (the newest strings) |
 | Czech | cs | 2,166 / 2,177 (99%, draft) | yes, but the newest strings | Latin; count-neutral plural wording | no | draft | 1–2 (after native review) |
+
+Swedish (`sv`): every UI string translated, and 120 of the 588 command labels and menu
+wordings (the rest show in English); native review welcome.
 
 The layer is done. Per-language hours above are agent hours for a catalog of ~1,800 entries
 (a machine draft, then a pass over the panels for overflow), plus each language's plural rule where
