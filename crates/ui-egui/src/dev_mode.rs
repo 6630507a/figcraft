@@ -500,18 +500,18 @@ pub fn status(app: &mut FigApp, ui: &mut Ui, doc: &Document, sel: &[NodeId]) {
     row(ui, 32.0, |ui| crate::section_panel::status_dropdown(app, ui, doc, sel, w));
     if let [id] = sel {
         let changed = doc.node(*id).is_some_and(|n| n.dev_status == DevStatus::ReadyForDev && n.dev_changed);
-        let focused = app.session.ds().ok().and_then(figcraft_engine::DocState::focused) == Some(*id);
+        let ds = app.session.ds().ok();
+        let focused = ds.and_then(figcraft_engine::DocState::focused) == Some(*id);
+        // Unchanged since it was marked (or not ready for dev): compared with the newest saved version.
+        let newest = ds.and_then(|d| d.versions.last()).map(|v| v.id.clone()).filter(|_| !changed);
         row(ui, 32.0, |ui| {
             ui.spacing_mut().item_spacing.x = 8.0;
             if !focused && widgets::button(ui, tr("Focus view"), false, true).on_hover_text(tr("Show only this on the canvas")).clicked() {
                 app.run("dev.focus", json!({"id": id}));
             }
-            if changed
-                && widgets::button(ui, tr("Compare changes"), true, true)
-                    .on_hover_text(tr("What changed since it was marked ready for dev"))
-                    .clicked()
-            {
-                app.run("dev.compare", json!({"id": id, "show": true}));
+            let tip = if changed { tr("What changed since it was marked ready for dev") } else { tr("What changed since a saved version") };
+            if (changed || newest.is_some()) && widgets::button(ui, tr("Compare changes"), changed, true).on_hover_text(tip).clicked() {
+                app.run("dev.compare", json!({"id": id, "version": newest, "show": true}));
             }
         });
     }

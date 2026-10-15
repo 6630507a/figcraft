@@ -81,6 +81,8 @@ mod cursors_tests;
 #[cfg(test)]
 mod dev_mode_tests;
 #[cfg(test)]
+mod devmode_tail_tests;
+#[cfg(test)]
 mod export_preview_tests;
 #[cfg(test)]
 mod field_tests;
@@ -694,7 +696,7 @@ impl FigApp {
                 "panel.assets" => self.ui.left_tab = LeftTab::Assets,
                 "panel.versionHistory" => versions::open(self),
                 "view.devCompare" => {
-                    self.ui.dev.compare = r.data.get("id").and_then(figcraft_engine::params::id_of).map(dev_compare::CompareView::new);
+                    self.ui.dev.compare = dev_compare::CompareView::requested(&r.data);
                 }
                 "panel.libraries" => {
                     self.ui.left_tab = LeftTab::Assets;
@@ -1186,7 +1188,7 @@ impl FigApp {
             "variables": self.ui.variables.is_some(),
             "versionHistory": self.ui.versions.open,
             "branchReview": self.ui.branch_review.as_ref().map(|r| json!({"id": r.id, "picks": r.picks, "mode": if r.mode == dev_compare::Mode::Overlay { "overlay" } else { "sideBySide" }})),
-            "devCompare": self.ui.dev.compare.as_ref().map(|c| json!({"id": c.id, "mode": if c.mode == dev_compare::Mode::Overlay { "overlay" } else { "sideBySide" }, "split": c.split})),
+            "devCompare": self.ui.dev.compare.as_ref().map(|c| json!({"id": c.id, "mode": if c.mode == dev_compare::Mode::Overlay { "overlay" } else { "sideBySide" }, "split": c.split, "version": c.version})),
             "devFocus": self.session.ds().ok().and_then(figcraft_engine::DocState::focused),
             "annotationFilter": self.ui.dev.categories.id(),
             "colorProfileDialog": self.ui.color_profile.map(|p| p.id()),
